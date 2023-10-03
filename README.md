@@ -1,2 +1,7 @@
-npm i
-npm run dev
+```bash
+  npm i
+```
+
+```bash
+  npm run dev
+```
