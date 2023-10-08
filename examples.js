@@ -1,9 +1,14 @@
 //forEach
 
-    //array de valores
+    //array de valores ES6
     const arrayForEach = [1, 2, 3, 4, 5];
     arrayForEach.forEach(item => {
     console.log(item);
+    });
+
+    //ES5
+    arrayForEach.forEach(function(item) {
+        console.log(item);
     });
 
     //array de objetos
@@ -16,6 +21,22 @@
     students.forEach(student => {
         console.log(`${student.name} tiene ${student.age} años.`);
     });
+
+    students.forEach(({ name, age }) => {
+        console.log(`${name} tiene ${age} años.`);
+    });
+
+    
+
+    //ES5
+    students.forEach(function(student) {
+        console.log(student.name + ' tiene ' + student.age + ' años.');
+    });
+    students.forEach(function(student, index) { //obtener posicion del array
+        console.log(student.name + ' tiene ' + student.age + ' años.');
+        console.log(index);
+    });
+
 
 //for of
 
@@ -52,13 +73,19 @@
     const arrayMap = [1, 2, 3, 4, 5];
     const newArrayMap = arrayMap.map(item => item * 2);
     console.log(newArrayMap)
+
+    //array de objetos
     const students = [
         { name: 'Juan', grade: 90 },
         { name: 'María', grade: 88 },
         { name: 'Pedro', grade: 75 }
       ];
-      
+      // ES6
       const topStudents = students.map(student => console.log(student));
+      console.log(students[2])
+      
+      // ES5
+      const topStudents = students.map(function(student){console.log(student)});
 
 
 //filter
@@ -80,6 +107,8 @@
 const arrayFind = [1, 2, 3, 4, 5];
 const foundItem = arrayFind.find(item => item === 3);
 console.log(foundItem)
+
+// hacerlo con array de objetos un ej de find
 
 //some
 const arraySome = [1, 2, 3, 4, 5];
@@ -108,7 +137,9 @@ function add(a, b) {
   }
 
 //let/const y async/await
-//let te permite declarar variables limitando su alcance (scope) al bloque, declaración, o expresión donde se está usando.a diferencia de la palabra clave var la cual define una variable global o local en una función sin importar el ámbito del bloque. 
+//let te permite declarar variables limitando su alcance (scope) al bloque, declaración, o expresión donde se está usando.
+// a diferencia de la palabra clave var la cual define una variable global o local en una función sin importar el ámbito del bloque.
+ 
 //const declara un valor que no se puede modificar
 
 //spread operator
@@ -123,4 +154,3 @@ const [first, second, third] = [1, 2, 3];
 //objetos: Permite extraer propiedades de un objeto y asignarlas a variables con el mismo nombre.
 const person = { name: 'Juan', age: 30 };
 const { name, age } = person;
-
