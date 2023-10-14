@@ -15,17 +15,31 @@ function App() {
       .catch((error) => console.error('Error:', error));
   }, []); // El segundo argumento vacío asegura que useEffect solo se ejecute una vez
 
+  // eslint-disable-next-line react/prop-types
+  const Button = ({ text, action }) => {
+    return (
+      <button onClick={action}>{text}</button>
+    );
+  }
+
+  const handleClick = () => {
+    alert('Botón clickeado');
+  }
+
   return (
     <div>
       <h1>API Call con Loading</h1>
       {loading ? (
         <p>Cargando...</p>
       ) : (
+        <>
         <ul>
           {data.map((item) => (
             <li key={item.id}>{item.title}</li>
           ))}
         </ul>
+        <Button text="Haz clic" action={handleClick} />
+        </>
       )}
     </div>
   );
