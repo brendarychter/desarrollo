@@ -32,135 +32,53 @@ CONSIGNA:
 function App() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [singleUsuarios, setSingleUsuarios] = useState([])
   const [userById, setUserById] = useState('')
 
-  useEffect(() => {
 
+  //Dejar lo mas limpio posible el useEffect principal, en caso de tener una llamada a una API
+  // Ejemplo: landing de pasajes de avion
+  //          bandeja de entrada de mails
+  
+  useEffect(() => {
     async function getData(){
       try{
-        const response = await axios.get('https://jsonplaceholder.typicode.com/users');
-        console.log("await axios", await axios.get('https://jsonplaceholder.typicode.com/users'))
-        console.log(response.data)
-  
-        const {data} = response;
+        const {data} = await axios.get('https://jsonplaceholder.typicode.com/users');
         setItems(data);
         setLoading(false);
-        
-        // otra opcion
-        // const {data} = await axios.get('https://jsonplaceholder.typicode.com/users');
-      
-        const data1 = data.filter(item => item.address.city == 'Gwenborough');
-        console.log("Usuarios filtrados", data1);
-        setSingleUsuarios(data1);
-        // setSingleUsuario(data.filter(item => item.address.city == 'Gwenborough')
-        
-        
-        const usuariosName = data.map(item=>item.name);
-        console.log("Nombre usuarios", usuariosName);
-
-        const findUsuario = data.find(item=>item.email == "Sincere@april.biz");
-        console.log("Email especifico", findUsuario);
-
-
-        //creo q no esta del todo bien con la consigna
-        const findId = data.find(item=>item.id == 1);
-        console.log("Usuario especifico", findId.name, findId.address);
-        setUserById(findId.name);
-
-        // hacer un boton para cada uno de estos. mostrar en un alert. agregarle propiedades de estilos
-
-
-
-        // ahora esta mejor ;)
-        // fetch(`${URL}/1`)
-        // .then(function(response) {
-        //   return response.json();
-        // })
-        // .then(function(data) {
-        //   const nombre = data.name;
-        //   const direccion = data.address;
-        //   console.log("intento2", nombre, direccion);
-        // })
-        // .catch(function(error) {
-        //   console.error(error);
-        // });
-   
-
+        // Uso AXIOS para traer la data de la API
+        // Set de mi variable items que tengo mas arriba
+        // El loading lo dejo en false que significa que ya tengo todo cargado
         } catch (error){
           console.log(error);
         }
     }
     getData();
-
-    // Realiza la llamada a la API al cargar el componente 
-    // esto funciona
-    // const URL=('https://jsonplaceholder.typicode.com/users')
-    // axios.get(URL)
-
-    // .then(({data}) => {
-    //   setItems(data);
-
-    //   const singleUsuarios = data.filter(item => item.address.city == 'Gwenborough');
-    //   console.log("Usuarios filtrados", singleUsuarios)
-
-    //   const usuariosName = data.map(item=>item.name);
-    //   console.log("Nombre usuarios", usuariosName);
-
-    //   const findUsuario = data.find(item=>item.email == "Sincere@april.biz");
-    //   console.log("Email especifico", findUsuario);
-
-
-    //   //creo q no esta del todo bien con la consigna
-    //   const findId = data.find(item=>item.id == 1);
-    //   console.log("Usuario especifico", findId.name, findId.address);
-
-
-    //   // ahora esta mejor ;)
-    //   fetch(`${URL}/1`)
-    //   .then(function(response) {
-    //     return response.json();
-    //   })
-    //   .then(function(data) {
-    //     const nombre = data.name;
-    //     const direccion = data.address;
-    //     console.log("intento2", nombre, direccion);
-    //   })
-    //   .catch(function(error) {
-    //     console.error(error);
-    //   });
-  
-
-    // })
-    // .catch((error) => console.log(error));
   }, []); // El segundo argumento vacío asegura que useEffect solo se ejecute una vez
-  //console.log(items);
 
   
-const handleClick = () => {
-    alert('Botón clickeado');
+  // Tantos useEffect como dependencias quiera oir y estar atenta
+  useEffect(()=> {
+    const user = items.find(item=>item.id == 3);
+    setUserById(user);
+
+    // desde aca puedo convocar a funciones que esten por afuera
+
+  }, [items]) // El segundo argumento *items* asegura que ese useEffect esta escuchando a items y va a 
+              // mostrar lo que tiene adentro una vez lleno
+  
+  const handleClick = (texto) => {
+    console.log(userById[texto]);
   }
 
-  const handleClickAlert = () => {
-    alert({alert});
-  }
-  
-  const sumar = (param1, param2)=> { // definicion de funcion
-    return param1 + param2
-  }
-  console.log(sumar(1, 2))
-  
+  // const objeto = {
+  //   name: 'brenda',
+  //   edad: 29
+  // }
 
-  const objetos = {
-    valor1: 1,
-    valor2: 2
-   }
+  // console.log(objeto['name'])
 
-sumar(objetos.valor1, objetos.valor2)
-
-  
-console.log(items);
+  // const array = ['manzana', 'peras', 'bananas']
+  // console.log(array[2])
   return ( // cuando queres incorporar codigo js en el html, va dentro de {}
     <div>
       <h1>API Call con Loading</h1>
@@ -168,14 +86,15 @@ console.log(items);
         <p>Cargando...</p>
       ) : (
         <>
-        <ul>
-          {items.map((item) => (
-            <li key={item.id}>{item.name}</li> // cada vez q recorres, react te pide que cada elemento tenga un key. la key en un array es index, en objeto es id
-          ))}
-        </ul>
-        <MyButton text="Haz clic" action={handleClick} style={{ backgroundColor: 'red' }} />
-        <MyButton text="Single Usuario" action={handleClickAlert} style={{ backgroundColor: 'blue' }} />
-        <button onClick={()=>alert(userById)}>prueba single usuarios </button>
+          <ul>
+            {items.map((item) => (
+              <li key={item.id}>{item.name}</li> // cada vez q recorres, react te pide que cada elemento tenga un key. la key en un array es index, en objeto es id
+            ))}
+          </ul>
+          <MyButton text="Name" action={()=>handleClick('name')} color='red' />
+          <MyButton text="ID" action={()=>handleClick('id')} color='blue' />
+          
+          {/* <button onClick={()=>alert(userById.address.street)}>prueba single usuarios </button> */}
         </>
       )}
     </div>
