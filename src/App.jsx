@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import MyButton from './components/MyButton';
 // useState es un hook (comportamiento propio de react que provee funcionalidades de formas simples), que permite definir en una misma linea 
 // una variable junto a su funcion modificadora. 
 // ejemplos: const [variable, setVariable] = useState(valorInicial)
@@ -32,6 +33,9 @@ function App() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [singleUsuarios, setSingleUsuarios] = useState([])
+  const [userById, setUserById] = useState('')
+
   useEffect(() => {
 
     async function getData(){
@@ -47,8 +51,11 @@ function App() {
         // otra opcion
         // const {data} = await axios.get('https://jsonplaceholder.typicode.com/users');
       
-        const singleUsuarios = data.filter(item => item.address.city == 'Gwenborough');
-        console.log("Usuarios filtrados", singleUsuarios);
+        const data1 = data.filter(item => item.address.city == 'Gwenborough');
+        console.log("Usuarios filtrados", data1);
+        setSingleUsuarios(data1);
+        // setSingleUsuario(data.filter(item => item.address.city == 'Gwenborough')
+        
         
         const usuariosName = data.map(item=>item.name);
         console.log("Nombre usuarios", usuariosName);
@@ -60,8 +67,11 @@ function App() {
         //creo q no esta del todo bien con la consigna
         const findId = data.find(item=>item.id == 1);
         console.log("Usuario especifico", findId.name, findId.address);
+        setUserById(findId.name);
 
-        
+        // hacer un boton para cada uno de estos. mostrar en un alert. agregarle propiedades de estilos
+
+
 
         // ahora esta mejor ;)
         // fetch(`${URL}/1`)
@@ -124,12 +134,50 @@ function App() {
 
     // })
     // .catch((error) => console.log(error));
-  }, [items]); // El segundo argumento vacío asegura que useEffect solo se ejecute una vez
+  }, []); // El segundo argumento vacío asegura que useEffect solo se ejecute una vez
   //console.log(items);
 
-  return (
+  
+const handleClick = () => {
+    alert('Botón clickeado');
+  }
+
+  const handleClickAlert = () => {
+    alert({alert});
+  }
+  
+  const sumar = (param1, param2)=> { // definicion de funcion
+    return param1 + param2
+  }
+  console.log(sumar(1, 2))
+  
+
+  const objetos = {
+    valor1: 1,
+    valor2: 2
+   }
+
+sumar(objetos.valor1, objetos.valor2)
+
+  
+console.log(items);
+  return ( // cuando queres incorporar codigo js en el html, va dentro de {}
     <div>
-      {loading ? "true" : "false"}
+      <h1>API Call con Loading</h1>
+      {loading ? ( // como esto que incorpora una funcion ternaria
+        <p>Cargando...</p>
+      ) : (
+        <>
+        <ul>
+          {items.map((item) => (
+            <li key={item.id}>{item.name}</li> // cada vez q recorres, react te pide que cada elemento tenga un key. la key en un array es index, en objeto es id
+          ))}
+        </ul>
+        <MyButton text="Haz clic" action={handleClick} style={{ backgroundColor: 'red' }} />
+        <MyButton text="Single Usuario" action={handleClickAlert} style={{ backgroundColor: 'blue' }} />
+        <button onClick={()=>alert(userById)}>prueba single usuarios </button>
+        </>
+      )}
     </div>
   );
 }
