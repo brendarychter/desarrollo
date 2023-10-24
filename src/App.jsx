@@ -33,6 +33,8 @@ function App() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userById, setUserById] = useState('')
+  const [userByEMail, setUserByEmail] = useState('')
+  const [userByAddress, setUserByAddress] = useState('')
 
 
   //Dejar lo mas limpio posible el useEffect principal, en caso de tener una llamada a una API
@@ -66,8 +68,35 @@ function App() {
   }, [items]) // El segundo argumento *items* asegura que ese useEffect esta escuchando a items y va a 
               // mostrar lo que tiene adentro una vez lleno
   
+  useEffect(()=> {
+    const findUsuario = items.find(item=>item.email == "Sincere@april.biz");
+    setUserByEmail(findUsuario);
+
+    // desde aca puedo convocar a funciones que esten por afuera
+
+  }, [items])
+
+
+  useEffect(()=> {
+    const userByAddress = items.filter(item => item.address.city == 'Aliyaview');
+    console.log("Usuarios filtrados", userByAddress);
+    setUserByAddress(userByAddress);
+    // desde aca puedo convocar a funciones que esten por afuera
+
+  }, [items])
+
+
+
   const handleClick = (texto) => {
     console.log(userById[texto]);
+  }
+
+  const handleClickEmail = (texto) => {
+    console.log(userByEMail[texto]);
+  }
+
+  const handleClickAddress = (texto) => {
+    console.log(userByAddress[texto]);
   }
 
   // const objeto = {
@@ -93,6 +122,9 @@ function App() {
           </ul>
           <MyButton text="Name" action={()=>handleClick('name')} color='red' />
           <MyButton text="ID" action={()=>handleClick('id')} color='blue' />
+          <MyButton text="Email" action={()=>handleClickEmail('name')} color='purple' />
+          <MyButton text="Address" action={()=>handleClickAddress('address')} color='green' />
+
           
           {/* <button onClick={()=>alert(userById.address.street)}>prueba single usuarios </button> */}
         </>
