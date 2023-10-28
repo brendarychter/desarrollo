@@ -78,7 +78,18 @@ function App() {
 
 
   useEffect(()=> {
-    const userByAddress = items.filter(item => item.address.city == 'Aliyaview');
+    console.log('items: ', items)
+    const userByAddress = items.filter(item => {
+      // const city = item.address.city;
+      // const firstLetter = city[0]; //['M', 'i', 'a', 'm', 'i']
+      // if(firstLetter == "S"){
+      //   return item.name
+      // }
+
+      const city = item.address.city;
+      const firstLetter = city[0];
+      return firstLetter === "S"; 
+    });
     console.log("Usuarios filtrados", userByAddress);
     setUserByAddress(userByAddress);
     // desde aca puedo convocar a funciones que esten por afuera
@@ -86,19 +97,57 @@ function App() {
   }, [items])
 
 
+  // const handleClickName = (texto) => {
+  //   console.log(userById[texto]);
+  // }
 
-  const handleClick = (texto) => {
-    console.log(userById[texto]);
+  // const handleClickEmail = (texto) => {
+  //   console.log(userByEMail[texto]);
+  // }
+
+                      //donde,   que  
+  const handleClick = (variable, parametro) => {
+    console.log(variable[parametro]);
   }
 
-  const handleClickEmail = (texto) => {
-    console.log(userByEMail[texto]);
+
+////////////
+  const getTexto = (parametro) => {
+    return 1;
   }
 
-  const handleClickAddress = (texto) => {
-    console.log(userByAddress[texto]);
+  getTexto(2)
+
+//['a', 'b', 'c']...
+//0      1     2
+
+////////////
+
+
+  const handleClickAddress = () => {
+    //muestro todo el array [{},{}]
+    //console.log(userByAddress)
+    
+    //usuario1
+    //usuario2 (porque es un foreach que recorre el array)
+    userByAddress.forEach(item=>console.log(item.name))
+
+
+    //Desestructurado
+    userByAddress.forEach(({name})=>console.error(name));
+
+    //con index
+    userByAddress.forEach((item, index)=>console.warn(item.name, index))
+
+
+    //[usuario1, usuario2]
+    //console.log(userByAddress[0].name, userByAddress[1].name)
   }
 
+  // [{}]
+  // {}
+
+  
   // const objeto = {
   //   name: 'brenda',
   //   edad: 29
@@ -120,10 +169,10 @@ function App() {
               <li key={item.id}>{item.name}</li> // cada vez q recorres, react te pide que cada elemento tenga un key. la key en un array es index, en objeto es id
             ))}
           </ul>
-          <MyButton text="Name" action={()=>handleClick('name')} color='red' />
-          <MyButton text="ID" action={()=>handleClick('id')} color='blue' />
-          <MyButton text="Email" action={()=>handleClickEmail('name')} color='purple' />
-          <MyButton text="Address" action={()=>handleClickAddress('address')} color='green' />
+          <MyButton text="Name" action={()=>handleClick(userById, 'name')} color='red' />
+          <MyButton text="ID" action={()=>handleClick(userById, 'id')} color='blue' />
+          <MyButton text="Email" action={()=>handleClick(userByEMail, 'name')} color='purple' />
+          <MyButton text="Address" action={()=>handleClickAddress()} color='green' />
 
           
           {/* <button onClick={()=>alert(userById.address.street)}>prueba single usuarios </button> */}
