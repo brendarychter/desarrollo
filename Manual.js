@@ -6,9 +6,9 @@
         - Renderizado condicional
         - filter/map/find
         - Router - link
+        - Rutas dinámicas
     - Context
     - ...rest
-    - Rutas dinámicas
 */
 
 // - Orden en definición de componente - props
@@ -16,16 +16,18 @@
 //          Van arriba de todo en todos los archivos. Chequear que si se escribe una función/variable que no está en tu archivo 
 //          o que marca el vscode, es porque no está importado.    
 import {axios} from 'axios';
-import {Cajita} from '../Cajita';
+import {Show} from '../Show';
 import {useEffect, useState} from 'react';
 import {useAppContext} from './Context';
-
+import {Mijson} from './api';
 
 //      2- DEFINICIÓN DE COMPONENTE
 //          Le pongo nombre al componente o la página o context que necesite y, si es necesario, 
 //          las props que va a recibir de su padre
 
-const Show = ({id})=> {
+const Shows = ({id})=> {
+
+//NO OLVIDAR CONSOLE.LOG DE TODO
 
 //      3- DEFINICIÓN DE VARIABLES LOCALES Y/O CONVOCATORIA DE "VARIABLES GLOBALES (CONTEXT)"    
 //          Se utiliza useState para variables que se quieran definir y dar valor posteriormente. Se les puede dar valor inicial
@@ -37,6 +39,7 @@ const Show = ({id})=> {
 
     const [show, setShow] = useState([]);
     const [showsLoading, setShowsLoading] = useState(true);
+    
     const [nombre, setNombre] = useState();
 
 //      4- USEEFFECT: PRESTAR ATENCION A QUE PIDE EL COMPONENTE/PAGINA. 
@@ -57,7 +60,7 @@ const Show = ({id})=> {
                 // necesito incorporarlo en la url
                 // Fórmula: usar comilla ` - texto random - incorporar la variable así: ${id} - `
 
-                const show = await axios.get(`https://api.tvmaze.com/shows/${id}`);
+                const show = await axios.get(`http://api.tvmaze.com/shows/${id}`);
                 
                 // Guardo la respuesta en la variable (línea 32) - no olvidar que axios trae lo que necesito en .data
                 setShow(show.data);
@@ -90,7 +93,9 @@ const Show = ({id})=> {
         // Llamo y ejecuto la función que está arriba
         handleGetShow();
     // *    
-    }, [id]);
+    }, [id]); // si quiero hacerlo una vez, esto va vacío []
+              // por ejemplo, al momento de una landing, que quiero que se ejecute
+              // algo ni bien caes en la página-> llamada a api, mostrar x cosa, etc.
 
 
     // 5- DEVUELVO EL COMPONENTE - no olvidar el return
@@ -114,9 +119,24 @@ const Show = ({id})=> {
             {/* 
                     LISTAARECORRER.MAP ((ITEM)=> { ejecuto codigo, muestro li, etc - SIEMPRE ACÁ SE MANEJA ITEM})
             */}
-            {show.genres.map((item) => {
-              return <li key={item}>{item}</li>;
+            {/* 
+              for (var i = 0; i < show.genres.length; i++) {
+                console.log(show.genres[i]);
+              }
+
+              show.genres[i] === item
+            */}
+            {show.genres.map((genre) => {
+              // Recordar que si manejo una lista si o si hay que poner el 
+              // atributo key: lo mas logico es poner un id alifleres+'idAlfiler'
+              return <li key={genre}>{genre}</li>;
             })}
+
+            {
+              shows.map((showSingular)=> {
+                return <Show show={show} origin="FS"/>
+              })
+            }
           </ul>{' '}
           <button>
 
@@ -129,4 +149,111 @@ const Show = ({id})=> {
 
 
 // 9- EXPORTO MI COMPONENTE
-export default Show;
+export default Shows;
+
+
+// FUNCIONES
+// Declaración de función. Esto así solo no hace nada
+const miFuncion = (texto1, texto2) => {
+  // return texto1 + ' ' + texto2;
+  return `${texto1} ${texto2}`;
+}
+
+// Llamar
+miFuncion("hola", "mundo");
+
+
+
+
+/////////////////////CONTEXT////////////////////////
+// Es un reglamento de declaraciones.
+// Es decir que declaro cosas que van a ser exportadas desde aca
+// e importadas desde quien me consuma -> page, landing, componente...
+// Las funciones no se ejecutan hasta que sean llamadas
+
+// Import de cosas propias de react - usestate, definiciones propias del contexto
+import React, { useState, createContext, useContext } from 'react';
+// Importo axios porque me pide hacer llamadas a apis
+import axios from 'axios';
+
+// Creo el contexto
+const AppContext = createContext();
+
+const AppProvider = ({ defaultValue = [], children }) => {
+  // Defino variables y metodos que cambian a esas variables.
+  // Estos setter (setShowdata, setLoading...) NO se exportan
+  // Esto quiere decir que cuando quiera usar en una page que importa el context === Page shows/id import Context
+  // y yo quiero usarloading, no puedo setLoading(false) XXXXXX
+  // Solo desde page puedo usar loading*. Loading solo tiene un valor mostrable true/false
+  // y me sirve como flag para mostrar o no la data
+  const [showsData, setShowsData] = useState(defaultValue);
+  const [singleShowData, setSingleShowData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(true);
+
+
+  // Funciones vemos adentro que tienen llamadas a api
+  // Me pide un parametro
+  // El nombre dice que trae shows (plural)
+  const handleGetShows = async (query) => {
+    console.log('data del search', query);
+    try {
+      const showsData = await axios.get(
+        `https://api.tvmaze.com/search/shows?q=${query}`,
+      );
+      // La respuesta que yo necesito esta adentro de .data
+      console.log(showsData.data);
+      // Setea la info que tiene la api
+      setShowsData(showsData.data); // SOLO ACA SE CAMBIA EL VALOR DE
+      // Cambiarle el valor al loading SOLO ACA SE CAMBIA EL VALOR DE LOADING
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Otra funcion mas. El nombre lo dice, trae un solo show (singular)
+  // Tiene un parametro que es id
+  const handleGetSingleShow = async (id) => {
+    console.log(id);
+    try {
+      const singleShowData = await axios.get(
+        `https://api.tvmaze.com/shows/${id}`,
+      );
+      console.log(singleShowData.data);
+      setSingleShowData(singleShowData.data);
+      setShowLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <AppContext.Provider
+    // El provider tiene una prop que es VALUE
+    // que me indica tanto VALORES como FUNCIONES que se van a exportar
+      value={{
+        showsData,
+        handleGetShows,
+        loading,
+        singleShowData,
+        handleGetSingleShow,
+        showLoading,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within a AppContextProvider');
+  }
+  return context;
+};
+
+export { AppProvider, AppContext };
+
+
